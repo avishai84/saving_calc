@@ -198,7 +198,6 @@
 .savings_calc_test-box a.savings_calc_test-getStartedButtonTracker.savings_calc_test-getStartedButton.savings_calc_test-getStartedButton1{
     color:#333;
 }
-
 .savings_calc_test-box .savings_calc_test-withcard:nth-child(1):after {
     content: 'Tax calculated in checkout';
     display: inline-block;
