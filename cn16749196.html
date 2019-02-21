@@ -1,0 +1,641 @@
+
+<!-- BEGIN WCD Shopping Bag code -->
+
+<!--
+ - 1. CSS: globaloptimized css removal issue fix
+ - 2. 11/22 change empty bag message
+ - 3. Shopping bag iPhone Chrome hide grid/list
+ - 4. Ship options display, remove decimal overrides
+ - 5. BPX-903 Shopping bag-fill bluebar when EDFS is available 7/25/2017
+ - 6. promo in Bag fix
+ - 7. 11/16/17 : PLAT-938 - PDP Link Breakage from Bag - commented out 071218
+ - 8. OCA ad in bag tracking
+ - 9. ONOL Shopping Bag Calculator Test - To be removed after test complete
+-->
+
+<!-- BEGIN Shopping Bag Override -->
+
+<style type="text/css">
+/** globaloptimized css removal issue fix **/
+  .shopping_bagPage .catnav ul {
+    list-style-type: none;
+}
+.shopping_bagNav .mkt_topnav-container .sds_grid-root, .shopping_bagNav #footer .sds_grid-root { background: none; }
+
+</style>
+
+
+<script type="text/javascript">
+//Hide the Grid/List toggle on iPhone Chrome browser - Requested by Roja Imani 2016.09.29 -->
+
+if( location.pathname == '/buy/shopping_bag.do' ) {
+
+jQuery(document).ready(function() {
+  var agent = navigator.userAgent;
+  // alert(agent);
+  if ( agent.indexOf('CriOS') > -1 && jQuery('.savedBagCol.listAndGridViewButtonContainer').length > 0 ) {
+    jQuery('.savedBagCol.listAndGridViewButtonContainer').hide();
+    jQuery('.listAndGridViewButtonContainer .listViewButton').click();
+  }
+});
+
+}
+
+
+
+// BEGIN Ship option Basic display/remove decimal -->
+
+if( location.pathname == '/buy/shopping_bag.do' || ( location.pathname == '/profile/validate_sign_in.do' && window["angular"] != null ) ) {
+
+/* Removing .00 from price information */
+
+window.angular && (function($) {
+  function WcdAngularDecorator(appName, targetName, dependencies, link) {
+
+    function _decorateTarget() {
+        var args = [].slice.call(arguments),
+            $delegate = args.pop(),
+            directive = $delegate[0],
+            hasCompile = _.isFunction(directive.compile),
+            oldCompile = (hasCompile && directive.compile) || $.noop;
+
+        function _decorateLink() {
+            var linkArgs = [].slice.call(arguments);
+            (oldCompile() || $.noop).apply(null, linkArgs);
+            link.apply(null, args.concat(linkArgs));
+        }
+
+        function _decorateCompile() {
+            return _decorateLink;
+        }
+        return _.assign(directive, {
+            compile: _decorateCompile
+        }) && $delegate;
+    }
+
+    function _targetProvider($provide) {
+        $provide.decorator(targetName, dependencies.concat(['$delegate', _decorateTarget]));
+    }
+
+    angular.module(appName).config(_targetProvider);
+    return true;
+  };
+
+  window.WcdAngularDecorator = WcdAngularDecorator;
+})(jQuery, window);
+
+window.WcdAngularDecorator &&
+WcdAngularDecorator(
+    'gid.app.shippingOptions.directives',
+    'shippingOptionsDirective',
+    ['personalizationService'],
+    function _shippingOptionsLink(personalizationDataProvider, scope, elm, attrs, ctrl) {
+      var $ = jQuery;
+      function _updateShippingOptions() {
+          _.each($(elm).find('.radioText span'), function(el) {
+            var $el = $(el),
+                priceUpdated = ($el.text() || '').split('.')[0];
+            $el.html(priceUpdated);
+          });
+      }
+      function _optionChangeWatcher() {
+        scope.$evalAsync(_updateShippingOptions);
+      }
+      scope.$watch('shippingoptions', _optionChangeWatcher)
+
+    }
+);
+
+  var wcd_ShoppingBagTextNew = {
+    model: {
+    		shipingId7to9on0201: '2012',
+    		shipingIdBasicon0201: '6003',
+    		shippingId3to5: '1304',
+			shipingIdExpon0201: '6015',
+  			shippingId1: '2020',
+  			shipingId7to9on0201Present: false,
+  			shipingIdBasicon0201Present: false,
+			shipingIdExpon0201Present: false,
+  			shippingId3to5Present: false,
+			shippingId1Present: false
+    },
+
+    init: function() {
+      var model = wcd_ShoppingBagTextNew.model;
+
+			/*jQuery(document).on('wcd_ShoppingBagTextNew:ready', function() {
+					var youSaveTimer = setTimeout( function() {
+						if(model.shipingId7to9on0201Present){
+							var currentPrice7to9 = jQuery('#shippingOptionsRadioText' + model.shipingId7to9on0201).find('span').html();
+							currentPrice7to9 = currentPrice7to9.replace('.00','');
+							jQuery('#shippingOptionsRadioText' + model.shipingId7to9on0201 ).find('span'). html(currentPrice7to9);
+						}
+						if(model.shipingIdBasicon0201Present){
+							if(jQuery('#shippingOptions' + model.shipingIdBasicon0201).attr('disabled')=='disabled'){
+								jQuery('#shippingOptionsRadioText' + model.shipingIdBasicon0201).css('font-size','87.5%');
+							}
+							var currentPriceB = jQuery('#shippingOptionsRadioText' + model.shipingIdBasicon0201).find('span').html();
+							currentPriceB = currentPriceB.replace('.00','');
+							jQuery('#shippingOptionsRadioText' + model.shipingIdBasicon0201 ).find('span'). html(currentPriceB);
+						}
+
+						if(model.shippingId3to5Present){
+							var currentPrice3to5 = jQuery('#shippingOptionsRadioText' + model.shippingId3to5).find('span').html();
+							currentPrice3to5 = currentPrice3to5.replace('.00','');
+							jQuery('#shippingOptionsRadioText' + model.shippingId3to5 ).find('span'). html(currentPrice3to5);
+						}
+						if(model.shipingIdExpon0201Present){
+							var currentPriceE = jQuery('#shippingOptionsRadioText' + model.shipingIdExpon0201).find('span').html();
+							currentPriceE = currentPriceE.replace('.00','');
+							jQuery('#shippingOptionsRadioText' + model.shipingIdExpon0201 ).find('span'). html(currentPriceE);
+						}
+						if(model.shippingId1Present){
+							var currentPrice1 = jQuery('#shippingOptionsRadioText' + model.shippingId1).find('span').html();
+							currentPrice1 = currentPrice1.replace('.00','');
+							jQuery('#shippingOptionsRadioText' + model.shippingId1 ).find('span'). html(currentPrice1);
+						}
+					}, 1000 );
+				});*/
+
+	      // Loop thru ship options; this decorator will run on load, whenever new option selected or shopping bag item updated/removed
+	      var shoppingBagTransformerModule = angular.module('gid.transformer.shoppingBagTransformer');
+	      shoppingBagTransformerModule.config(function($provide) {
+	        $provide.decorator('shoppingBagTransformer', function($delegate) {
+
+	          model.timesDecoratorRuns++;
+	          var oldTransformResponse    = $delegate.transformResponse;
+	          var oldTransformBagResponse = $delegate.transformBagResponse;
+
+
+	          var overrideShippingData = function(jsonData) {
+	          	var model = wcd_ShoppingBagTextNew.model;
+	            if (jsonData.shoppingBag && jsonData.shoppingBag.shippingInfo && jsonData.shoppingBag.shippingInfo.shippingOptions) {
+					var shipOptionsNew = jsonData.shoppingBag.shippingInfo.shippingOptions || [];
+					shipOptionsNew.forEach(function(elt, idx) {
+						/*if( elt.shippingId == model.shipingId7to9on0201 ) {
+							model.shipingId7to9on0201Present = true;
+						}
+						if( elt.shippingId == model.shipingIdBasicon0201 ) {
+							model.shipingIdBasicon0201Present = true;
+						}
+						if( elt.shippingId == model.shippingId3to5) {
+							model.shippingId3to5Present = true;
+						}*/
+						if( elt.shippingId == model.shipingIdExpon0201 ) {
+							model.shipingIdExpon0201Present = true;
+							if( elt.selected && elt.selected.toString() == 'true' ) {
+								elt.message = 'Orders placed on weekends, holidays or weekdays after 3:00 PM ET / 12:00PM PT will require an additional business day.';
+							}
+						}
+						if( elt.shippingId == model.shippingId1 ) {
+							model.shippingId1Present = true;
+							if( elt.selected && elt.selected.toString() == 'true' ) {
+								elt.message = 'Orders placed on weekends, holidays or weekdays after 3:00 PM ET / 12:00PM PT will require an additional business day.';
+							}
+						}
+					});
+					jsonData.shoppingBag.shippingInfo.shippingOptions = shipOptionsNew;
+	            }
+				//jQuery(document).trigger('wcd_ShoppingBagTextNew:ready');
+	            return jsonData;
+	          };
+
+	          $delegate.transformResponse = function(data, headers) {
+	            var jsonData = oldTransformResponse(data, headers);
+	            return overrideShippingData(jsonData);
+	          };
+
+	          $delegate.transformBagResponse = function(data) {
+	            var jsonData = oldTransformBagResponse(data);
+
+	            return overrideShippingData(jsonData);
+	          }
+	          return $delegate;
+	        });
+	      });
+	    }
+	  }
+	  wcd_ShoppingBagTextNew.init();
+	}
+
+
+// END Ship option Basic display/remove decimal -->
+
+
+// Begin: BPX-903 Shopping bag-fill bluebar when EDFS is available 7/25/2017-->
+
+if( location.pathname == '/buy/shopping_bag.do' && window["angular"] != null ) {
+
+window.angular && (function($) {
+  function WcdAngularDecorator(appName, targetName, dependencies, link) {
+
+    function _decorateTarget() {
+        var args = [].slice.call(arguments),
+            $delegate = args.pop(),
+            directive = $delegate[0],
+            hasCompile = _.isFunction(directive.compile),
+            oldCompile = (hasCompile && directive.compile) || $.noop;
+
+        function _decorateLink() {
+            var linkArgs = [].slice.call(arguments);
+            (oldCompile() || $.noop).apply(null, linkArgs);
+            link.apply(null, args.concat(linkArgs));
+        }
+
+        function _decorateCompile() {
+            return _decorateLink;
+        }
+        return _.assign(directive, {
+            compile: _decorateCompile
+        }) && $delegate;
+    }
+
+    function _targetProvider($provide) {
+        $provide.decorator(targetName, dependencies.concat(['$delegate', _decorateTarget]));
+    }
+
+    angular.module(appName).config(_targetProvider);
+    return true;
+  };
+
+  window.WcdAngularDecorator = WcdAngularDecorator;
+})(jQuery, window);
+
+window.WcdAngularDecorator && WcdAngularDecorator(
+
+    'gid.app.freeShippingQualification.directives',
+    'freeShippingQualificationDirective',
+    ['personalizationService'],
+    function _shippingOptionsLink(personalizationDataProvider, scope, elm, attrs, ctrl) {
+      var $ = jQuery;
+
+      function wcdFillEveryDayShippingBar(){
+
+      if ( ($('#free-shipping-qualification-section').length) && $.inArray($('span.qualification-message.label-a_universal.ng-binding')[0].innerText, [ 'Select FREE Every Day shipping in checkout', 'You’ve qualified for FREE 3-5 day shipping!', 'You’ve qualified for FREE 2-3 day shipping!', 'You’ve qualified for FREE next day shipping!'] )>=0){
+
+        jQuery('div.ui-progressbar-value.ui-widget-header.ui-corner-left').css('width','100%');
+
+      }
+
+        }
+
+        function _optionChangeWatcher() {
+          scope.$evalAsync(wcdFillEveryDayShippingBar);
+        }
+        scope.$watch('shippingoptions', _optionChangeWatcher)
+
+    }//end of wcdFillEveryDayShippingBar
+); //end of WcdAngularDecorator
+
+}//end of if
+
+// End : BPX-903 Shopping bag-fill bluebar when EDFS is available -->
+
+
+
+//Begin 11/6/2017 : Promo in bag fix -->
+/*
+window.promoInBagChange = 'Test';
+
+if( location.pathname == '/buy/shopping_bag.do' && window["angular"] != null ) {
+window.angular && (function($) {
+  function WcdAngularDecorator(appName, targetName, dependencies, link) {
+    function _decorateTarget() {
+        var args = [].slice.call(arguments),
+            $delegate = args.pop(),
+            directive = $delegate[0],
+            hasCompile = _.isFunction(directive.compile),
+            oldCompile = (hasCompile && directive.compile) || $.noop;
+        function _decorateLink() {
+            var linkArgs = [].slice.call(arguments);
+            (oldCompile() || $.noop).apply(null, linkArgs);
+            link.apply(null, args.concat(linkArgs));
+        }
+        function _decorateCompile() {
+            return _decorateLink;
+        }
+        return _.assign(directive, {
+            compile: _decorateCompile
+        }) && $delegate;
+    }
+    function _targetProvider($provide) {
+        $provide.decorator(targetName, dependencies.concat(['$delegate', _decorateTarget]));
+    }
+    angular.module(appName).config(_targetProvider);
+    return true;
+  };
+  window.WcdAngularDecorator = WcdAngularDecorator;
+})(jQuery, window);
+window.WcdAngularDecorator && WcdAngularDecorator(
+    'gid.app.appliedPromo.directive',
+    'appliedPromoDirective',
+    ['personalizationService'],
+    function _shippingOptionsLink(personalizationDataProvider, scope, elm, attrs, ctrl) {
+      var $ = jQuery;
+      function wcdChangePromoMessage(){
+            //write code to replace the promo text
+             var promoText = 'Promotion applied. You will see your card-specific savings at checkout when you pay with your Gap Inc. credit card';
+              var cardArray = ['FFCARD','BRCARD','BRNOW','SHIPBR','WELCOMECC','LUXE','MYCARD','NEWLOVE','BACKTOGAP','SHOPGC','NAVYIST','NAVYEST','NAVIEST','NEWBRC10','SILVERGAP','GAPCARDOCA','PRE15','NEWBRC','WELCOME','BDAYOCT','BDAYNOV','LUXE2017','SIGNATURE','TUESDAYS','WELCOMEBR','GAPCARDNOW','PRE20','SHOPOCA','LUXE2018','CARD40','BRCARD40','40CARD','BRCARD50','FAMFIRST','PLUS10','ONCBF','FRIYAY','HOLIYAY25','HOLIYAY30','HOLIYAY15','CARDVIP','CHEERS','HAPPY','EXCLUSIVE','BFAPPEASE','ONCPS','NEWCARD','QBD86ATC83','BDAYDEC','BDAYJAN','18ATCBD20','BENEFITS15','SILVER2018'];
+
+       var promoslist = jQuery('.applied-promo-with-flyouts');
+      var appiledpromosList = jQuery('.applied-promo-container.ng-isolate-scope');
+      appiledpromosList.each(function () {
+        console.log(appiledpromosList.find('.applied-promo').text());
+      });
+
+
+      promoslist.each(function () {
+        var myThis = jQuery(this);
+        var isPromo = cardArray.indexOf(myThis.find('.applied-promo').text()) !== -1;
+        var appiledMessage = myThis.find('.color--g3_universal').text();
+        var distAmt = myThis.find('.label-a_universal').text();
+        if (isPromo) {
+          var flyout = myThis.find('flyout');
+          // flyout.find('.ng-binding').hide();
+          flyout.find('.ng-scope').html(promoText);
+          myThis.find('.title').css('color','#0466ca');
+            if(appiledMessage === "Applied to 0 items"){
+                  myThis.find('.color--g3_universal').html("View savings in checkout");
+             }
+           if(distAmt === "— —"){
+                  myThis.find('.label-a_universal').hide();
+             }
+        }
+      });
+
+        }
+        function _optionChangeWatcher() {
+          scope.$evalAsync(wcdChangePromoMessage);
+        }
+        scope.$watch('promotions', _optionChangeWatcher)
+    }
+);
+}
+*/
+//End 11/6/2017 : Promo in bag fix -->
+
+// 11/16/17 : PLAT-938 - PDP Link Breakage from Bag - v2
+/*if( location.pathname == '/buy/shopping_bag.do' && window["angular"] != null ) {
+  window.angular && (function($) {
+    function WcdAngularDecorator(appName, targetName, dependencies, link) {
+      function _decorateTarget() {
+          var args = [].slice.call(arguments),
+              $delegate = args.pop(),
+              directive = $delegate[0],
+              hasCompile = _.isFunction(directive.compile),
+              oldCompile = (hasCompile && directive.compile) || $.noop;
+          function _decorateLink() {
+              var linkArgs = [].slice.call(arguments);
+              (oldCompile() || $.noop).apply(null, linkArgs);
+              link.apply(null, args.concat(linkArgs));
+          }
+          function _decorateCompile() {
+              return _decorateLink;
+          }
+          return _.assign(directive, {
+              compile: _decorateCompile
+          }) && $delegate;
+      }
+      function _targetProvider($provide) {
+          $provide.decorator(targetName, dependencies.concat(['$delegate', _decorateTarget]));
+      }
+      angular.module(appName).config(_targetProvider);
+      return true;
+    };
+    window.WcdAngularDecorator = WcdAngularDecorator;
+  })(jQuery, window);
+  window.WcdAngularDecorator && WcdAngularDecorator(
+      'gid.app.shoppingBag.directives',
+      'shoppingBagLineItemsDirective',
+      ['personalizationService'],
+      function _shippingOptionsLink(personalizationDataProvider, scope, elm, attrs, ctrl) {
+        function wcdChangeItemProductUrl(){
+            var selectedObj = jQuery('dd.productName a');
+            updateUrlObject(selectedObj);
+            selectedObj = jQuery(".editBagPopup .editBagProductName");
+            updateUrlObject(selectedObj);
+            selectedObj = jQuery(".itemMessageAlert");
+            updateUrlObject(selectedObj);
+            var selectedObj = jQuery('dd.gridProductName a');
+            updateUrlObject(selectedObj);
+          }
+          function _optionChangeWatcher() {
+            scope.$evalAsync(wcdChangeItemProductUrl);
+          }
+          function updateUrlObject(selectedObj) {
+            if( selectedObj.length > 0 ) {
+                selectedObj.each(function(idx, elt){
+                  var selectedItemObj = jQuery( elt );
+                  if( typeof selectedItemObj.attr("href") !== "undefined" ) {
+                    var params = getParams(selectedItemObj.attr("href"));
+                    if(params && params["pid"]) {
+                      var paramsPid = params["pid"];
+                      paramsPid = (paramsPid.length > 9) ? paramsPid.slice(0, 9) : paramsPid;
+                      var href = selectedItemObj.attr("href");
+                      selectedItemObj.attr("href", updateUrlParameter(href, 'pid', paramsPid));
+                    }
+                  }
+                });
+              }
+          }
+          function updateUrlParameter(url, param, value){
+               var regex = new RegExp('('+param+'=)[^\&]+');
+              return url.replace( regex , '$1' + value);
+          }
+          function getParams(url) {
+              var params = {};
+              var match = url.match(/\?(.*)$/);
+
+              if (match && match[1]) {
+                  match[1].split('&').forEach(function (pair) {
+                      pair = pair.split('=');
+                      params[pair[0]] = pair[1];
+                  });
+              }
+
+              return params;
+          }
+          scope.$watch('items', _optionChangeWatcher)
+      }
+  );
+} */
+// End PLAT-938 - PDP Link Breakage from Bag
+</script>
+
+<!-- BEGIN OCA ad in bag tracking -->
+<script type="text/javascript">
+if( location.pathname == "/buy/shopping_bag.do" ) {
+
+var wcdOcaAdTracking = function() {
+	var debugMode = false;
+	if( location.search.indexOf("ocaTrackDebug=true") > -1 ) { debugMode = true; }
+
+	// If user personalization data says user is pre-approved, the ad will show
+	jQuery(document).on("ocaAdTracking:ready", function() {
+		if( debugMode ) console.log("check for personalizationAttributes");
+
+		if( typeof personalizationService !== "undefined" && typeof personalizationService.model !== "undefined" && typeof personalizationService.model.personalizationData !== "undefined" && typeof personalizationService.model.personalizationData.personalizationInfoV1 !== "undefined" && personalizationService.model.personalizationData.personalizationInfoV1 != null && typeof personalizationService.model.personalizationData.personalizationInfoV1.personalizationAttributes !== "undefined" ) {
+
+			if( debugMode ) console.log("check for OCA values");
+
+			// GAPCRDPREAPVL, ONCRDPREAPVL, BRCRDPREAPVL = PLCC or CBCC
+
+			var preApproved = false;
+			var personAttr = personalizationService.model.personalizationData.personalizationInfoV1.personalizationAttributes;
+
+			jQuery( personAttr ).each( function( i, item ) {
+				if( typeof item.attributes !== "undefined" ) {
+					if( item.attributes.name.indexOf("GAPCRDPREAPVL") > -1 || item.attributes.name.indexOf("ONCRDPREAPVL") > -1 || item.attributes.name.indexOf("BRCRDPREAPVL") > -1 ) {
+						if( item.attributes.value == "PLCC" || item.attributes.value == "CBCC" ) {
+							preApproved = true;
+						}
+					}
+				}
+			});
+
+      if( preApproved ) {
+				if( debugMode ) console.log("pre-approved value present");
+
+				if( typeof wcdLib !== "undefined" && typeof wcdLib.trackValue !== "undefined" ) {
+					if( debugMode ) console.log("firing OCA ad tracking");
+
+					var trackBrand = "Gap";
+					if( location.hostname.indexOf("oldnavy") > -1 || location.hostname.indexOf("onol") > -1 ) {
+						trackBrand = "OldNavy";
+					}
+					else if( location.hostname.indexOf("bananarepublic") > -1 || location.hostname.indexOf("brol") > -1 ) {
+						trackBrand = "BR";
+					}
+
+					wcdLib.trackValue( this, "OCA_Bag_AdView_" + trackBrand, "OCA_Bag_AdView_" + trackBrand, "eVar7");
+				}
+			}
+		}
+	});
+
+	if( typeof window.personalizationService !== "undefined" && typeof personalizationService.model !== "undefined" && typeof personalizationService.model.isPersonalizationDataReady !== "undefined" && personalizationService.model.isPersonalizationDataReady == true ) {
+		jQuery(document).trigger("ocaAdTracking:ready");
+	}
+	else {
+		jQuery(document).on("personalizationData:ready", function() {
+			jQuery(document).trigger("ocaAdTracking:ready");
+		});
+	}
+}
+wcdOcaAdTracking();
+
+}
+</script>
+<!-- END OCA ad in bag tracking -->
+
+<!-- BEGIN ONOL Shopping Bag Calculator Test - To be removed after test complete -->
+<script>
+
+if (location.pathname == '/buy/shopping_bag.do' && window.angular !== undefined && window.angular.module !== undefined && window.salesCalcTestSeg !== undefined && window.salesCalcTest !== undefined && window.salesCalcTest === 'ACTIVE'){
+  // Loop thru ship options; this decorator will run on load, whenever new option selected or shopping bag item updated/removed
+  var shoppingBagTransformerModule = window.angular.module('gid.transformer.shoppingBagTransformer');
+  shoppingBagTransformerModule.config(function($provide) {
+    $provide.decorator('shoppingBagTransformer', function($delegate) {
+
+      var oldTransformResponse    = $delegate.transformResponse;
+      var oldTransformBagResponse = $delegate.transformBagResponse;
+
+
+      var doCalculation = function(jsonData) {
+        if (jsonData) {
+          //get sub total amount for ON products that are not from an excluded category
+          var salesCalc_activeItems = jsonData.shoppingBag.activeItems;
+          var salesCalc_excludedCategories = ["1019342", "5058", "76739", "1086887", "5001", "1113883", "1038092", "1038093", "46650"];
+          var salesCalc_filteredItems = salesCalc_activeItems.filter(function(item){
+            return item.brandAbbrName === "ON";
+          });
+
+          var salesCalc_subtotal = jsonData.shoppingBag.charges.subTotal;
+          
+          var salesCalc_nonExcludedItems = salesCalc_filteredItems.filter(function(item) { 
+            return salesCalc_excludedCategories.indexOf(item.categoryNumber) < 0 && item.productName.indexOf('Gift Card') < 0;
+          });
+
+          var salesCalc_nonExcludedItems_subTotal = salesCalc_nonExcludedItems.reduce(function(total, item){
+            return total + parseFloat(item.unformattedItemPriceSubtotal);
+          },0);
+
+          if (typeof salesCalc_subtotal === 'string'){
+            //remove $ from salesCalc_subtotal so that we can calculate savings
+            salesCalc_subtotal = parseFloat(salesCalc_subtotal.replace('$',''));
+
+            //send current sub total amount tier tracking
+            var salesCalc_subtotalAmountTier = salesCalc_subtotal;
+            var salesCalc_subtotalAmountTierString = 'salesCalc_subtotalAmountTier_0';
+
+            if (salesCalc_subtotalAmountTier >= 250){
+              salesCalc_subtotalAmountTierString = 'salesCalc_subtotalAmountTier_250+';
+            }
+            else if (salesCalc_subtotalAmountTier >= 200){
+              salesCalc_subtotalAmountTierString = 'salesCalc_subtotalAmountTier_200';
+            }
+            else if (salesCalc_subtotalAmountTier >= 150){
+              salesCalc_subtotalAmountTierString = 'salesCalc_subtotalAmountTier_150';
+            }
+            else if (salesCalc_subtotalAmountTier >= 100){
+              salesCalc_subtotalAmountTierString = 'salesCalc_subtotalAmountTier_100';
+            }
+            else if (salesCalc_subtotalAmountTier >= 75){
+              salesCalc_subtotalAmountTierString = 'salesCalc_subtotalAmountTier_75';
+            }
+            else if (salesCalc_subtotalAmountTier >= 50){
+              salesCalc_subtotalAmountTierString = 'salesCalc_subtotalAmountTier_50';
+            }
+            else if (salesCalc_subtotalAmountTier >= 25){
+              salesCalc_subtotalAmountTierString = 'salesCalc_subtotalAmountTier_25';
+            }
+
+            wcdLib.trackValue(this,salesCalc_subtotalAmountTierString,salesCalc_subtotalAmountTierString,'eVar6');
+            //console.log('tracked' + salesCalc_subtotalAmountTierString);
+
+            if (window.salesCalcTestSeg === 'A'){
+              //get the amount of savings using 20% off subtotal
+              var salesCalc_savingsAmount = Math.floor(salesCalc_nonExcludedItems_subTotal * 20) / 100;
+
+              //calculate the estimated subtotal w/ card
+              var salesCalc_subtotalWithCard = Math.floor((salesCalc_subtotal - salesCalc_savingsAmount) * 100) / 100;
+              
+              window.salesCalc_nonExcludedItems_subTotal_Global = salesCalc_nonExcludedItems_subTotal;
+              window.salesCalc_subtotal_Global = '$' + salesCalc_subtotal.toFixed(2);
+              window.salesCalc_savingsAmount_Global = '-$' + salesCalc_savingsAmount.toFixed(2);
+              window.salesCalc_subtotalWithCard_Global = '$' + salesCalc_subtotalWithCard.toFixed(2); 
+              
+              //assign values to display
+              jQuery('.savings_calc_test-SubTotal-Amount').html(window.salesCalc_subtotal_Global);
+              jQuery('.savings_calc_test-Savings-Amount').html(window.salesCalc_savingsAmount_Global);
+              jQuery('.savings_calc_test-FinalTotal-Amount').html(window.salesCalc_subtotalWithCard_Global);
+
+              if (jQuery) {
+                jQuery(document).trigger('wcd_salesCalc_override:ready');
+              }
+            }
+          }
+          return jsonData;
+        }
+        
+      };
+
+      $delegate.transformResponse = function(data, headers) {
+        var jsonData = oldTransformResponse(data, headers);
+        return doCalculation(jsonData);
+      };
+
+      $delegate.transformBagResponse = function(data) {
+        var jsonData = oldTransformBagResponse(data);
+        return doCalculation(jsonData);
+      };
+      return $delegate;
+    });
+  });
+}
+
+</script>
+
+<!-- END ONOL Shopping Bag Calculator Test - To be removed after test complete -->
+<!-- 16749196 -->
+<!-- END WCD Shopping Bag code -->
