@@ -17,7 +17,7 @@
     min-width: 88px;
 }
 
-@supports(-webkit-appearance: initial;) {
+@supports(-webkit-appearance: initial) {
     @media and (max-width: 414px) {
         .savings_calc_test-cardEnrollmentIcon-ON-CBCC {
             background-position: -318px 0px;
