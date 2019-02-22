@@ -117,13 +117,12 @@
     text-decoration: none;
 }
 
-.savings_calc_test-getStartedButton {
+.savings_calc_test-box .savings_calc_test-getStartedButton {
     float: right;
     font-weight: 700;
     background-color: #fff;
     border-width: 1px;
     color: #333;
-    font-size: 0.65em;
     opacity: 1;
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
@@ -157,7 +156,6 @@
 .savings_calc_test-box .savings_calc_test-getStartedButtonTracker {
     color: #333 ;
     text-decoration: none ;
-  	font-size:12px;
 }
 
 /* New message */
