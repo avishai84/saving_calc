@@ -17,13 +17,13 @@
     min-width: 88px;
 }
 
-@supports (-webkit-overflow-scrolling: touch) {
-    @media(max-width: 400px) {
+@supports(-webkit-appearance: initial;) {
+    @media and (max-width: 414px) {
         .savings_calc_test-cardEnrollmentIcon-ON-CBCC {
             background-position: -318px 0px;
         }
     }
-}
+} 
 
 .savings_calc_test-shippingSubTotalTitle {
     padding-right: .4em;
