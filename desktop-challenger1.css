@@ -1,3 +1,8 @@
+@media all and (max-width:767px){
+    .savings_calc_test-box {
+        display: none;
+    }
+  }
 .savings_calc_test-box {
     font-size: calc(13px + (15 - 13) * ((100vw - 768px) / (1400 - 768)));
       margin: .5em 0 .65em;
