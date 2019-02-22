@@ -3,13 +3,15 @@
         display: none;
     }
   }
-.savings_calc_test-box{
-    outline:1px solid #ddd;
-    padding:0.5em 0 0.5em 0.5em;
-    margin-bottom:2em;
-    display: flex;
-    font-size: calc(13px + (16 - 13) * ((100vw - 768px) / (1400 - 768)));
-}
+  @media all and (min-width:768px){
+    .savings_calc_test-box{
+        outline:1px solid #ddd;
+        padding:0.5em 0 0.5em 0.5em;
+        margin-bottom:2em;
+        display: flex;
+        font-size: calc(13px + (16 - 13) * ((100vw - 768px) / (1400 - 768)));
+    }
+  }
 
 .savings_calc_test-cardEnrollmentIcon-ON-CBCC {
     width: 88px;
