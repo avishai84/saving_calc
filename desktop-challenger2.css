@@ -25,12 +25,11 @@
     padding-left: 0.65em;
     width: 41%;
 }
-@supports (-webkit-overflow-scrolling: touch) {
-    @media(max-width: 400px) {
-        .savings_calc_test-cardEnrollmentIcon-ON-CBCC {
-            background-position: -318px 0px;
-        }
-    }
+
+.savings_calc_test-Bottom {
+    align-self: center;
+    width: 11%;
+    margin:0 auto;
 }
 
 @media screen and (min-width: 768px) and (max-width: 1023px){
@@ -50,6 +49,16 @@
     }
 }
 
+@media screen and (min-width: 1024px){
+  .savings_calc_test-box .middleSection{
+    width: 38%;
+  }
+  .savings_calc_test-Bottom {
+    width: 11.35%;
+	}
+}
+
+
 .savings_calc_test-shippingSubTotalTitle {
     padding-right: .4em;
     font-weight: 700;
@@ -67,7 +76,7 @@
     line-height: 1.25em;
     font-family: "Source Sans Pro", Helvetica, Arial, Roboto, sans-serif;
     padding-right: 0.5em;
-    color: #929292;
+    
 }
 
 .savings_calc_test-Card {
@@ -83,12 +92,6 @@
 .savings_calc_test-Top {
     background: #fff;
     display: flex;
-}
-
-.savings_calc_test-Bottom {
-    align-self: center;
-    width: 11%;
-    margin:0 auto;
 }
 
 .savings_calc_test-space {
@@ -174,6 +177,7 @@
 
 .savings_calc_test-box .link {
     color: #0466ca;
+  	font-size: 13px;
 }
 
 
@@ -193,12 +197,16 @@
 }
 .savings_calc_test-box .savings_calc_test-PromotionMessage b:nth-of-type(1) {
     text-transform: uppercase;
-    color: #333;
+   
 }
-.savings_calc_test-box a.savings_calc_test-getStartedButtonTracker.savings_calc_test-getStartedButton.savings_calc_test-getStartedButton1{
-    color:#333;
+.savings_calc_test-box .savings_calc_test-PromotionMessage > div:nth-child(4){
+ 		color: #929292;
 }
 
+.savings_calc_test-box a.savings_calc_test-getStartedButtonTracker.savings_calc_test-getStartedButton.savings_calc_test-getStartedButton1{
+    color:#333;
+    font-size: 12px;
+}
 .savings_calc_test-box .savings_calc_test-withcard:nth-child(1):after {
     content: 'Tax calculated in checkout';
     display: inline-block;
