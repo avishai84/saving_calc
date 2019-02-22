@@ -1,5 +1,5 @@
 .savings_calc_test-box {
-    font-size: calc(13px + (18 - 13) * ((100vw - 768px) / (1400 - 768)));
+    font-size: calc(13px + (15 - 13) * ((100vw - 768px) / (1400 - 768)));
       margin: .5em 0 .65em;
       padding-bottom: 0;
 }
@@ -49,6 +49,12 @@
     .savings_calc_test-Card {
         padding-left: 0.5em;
     }
+}
+
+@media all and (min-width: 1024px) {
+	.savings_calc_test-cardEnrollmentIcon-ON-CBCC {
+    transform: scale(0.60);
+	}
 }
 
 @supports (-webkit-overflow-scrolling: touch) {
@@ -178,11 +184,15 @@
 
 .savings_calc_test-box .link {
     color: #0466ca;
+  	font-size: 13px;
+    padding-top: 1em;
+    display: inline-block;
 }
 
 .savings_calc_test-box .savings_calc_test-getStartedButtonTracker {
     color: #333 ;
     text-decoration: none ;
+    font-size: 12px;
 }
 
 /* New message */
