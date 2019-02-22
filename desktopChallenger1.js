@@ -1,4 +1,3 @@
-
 window.salesCalcTest = 'ACTIVE';
 window.salesCalcTestSeg = 'A';
 window.salesCalc_subtotal_Global = '';
@@ -19,8 +18,6 @@ utils.waitUntil(function() {
     jQuery('.savings_calc_test-Savings-Amount').html(window.salesCalc_savingsAmount_Global);
     jQuery('.savings_calc_test-FinalTotal-Amount').html(window.salesCalc_subtotalWithCard_Global);
   });
-
-  
 
   setTimeout(function() {
     jQuery('.savings_calc_test-getStartedButtonTracker').on('click', function() {
