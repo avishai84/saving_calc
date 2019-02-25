@@ -1,3 +1,4 @@
+
 window.salesCalcTest = 'ACTIVE';
 window.salesCalcTestSeg = 'A';
 window.salesCalc_subtotal_Global = '';
@@ -6,19 +7,20 @@ window.salesCalc_subtotalWithCard_Global = '';
 var utils = window.optimizely.get('utils');
 var wcdSavingsCalcApplyURL = "https://apply.syf.com/eapply/eapply.action?clientCode=OLDNAVY&sitecode=onbcsl0d2";
 var brongSavingsCalcContent = '<div class="savings_calc_test-box"><div class="savings_calc_test-Top" style="overflow: hidden;"><div class="savings_calc_test-Card"><span style="display: inline-block;" class="savings_calc_test-cardEnrollmentIcon-ON-CBCC"></span><div class="savings_calc_test-PromotionMessage"><b>Save 20% on Old Navy items</b><br><div>with your first Old Navy Card purchase&#042;</div><div>Open a Card today!</div></div></div><div><div class="savings_calc_test-space savings_calc_test-body-a_universal savings_calc_test-preApprovalCardRow savings_calc_test-border"></div><div class="savings_calc_test-preApprovalCardRow"><span class="savings_calc_test-subTotalTitle savings_calc_test-shippingSubTotalTitle savings_calc_test-body-a_universal savings_calc_test-SubTotalText">Estimated Total</span><span class="savings_calc_test-shippingSubTotal savings_calc_test-body-a_universal savings_calc_test-SubTotal savings_calc_test-SubTotal-Amount"></span></div><div class="savings_calc_test-preApprovalCardRow savings_calc_test-border"><span class="savings_calc_test-subTotalTitle savings_calc_test-shippingSubTotalTitle savings_calc_test-saving savings_calc_test-body-a_universal">Savings</span><span class="savings_calc_test-shippingSubTotal savings_calc_test-saving savings_calc_test-body-a_universal savings_calc_test-Savings-Amount"></span></div></div><div class="savings_calc_test-Bottom"><div class="savings_calc_test-afterBar"><div class="savings_calc_test-total-space"><span class="savings_calc_test-subTotalTitle savings_calc_test-shippingSubTotalTitle savings_calc_test-withcard savings_calc_test-body-a_universal">Estimated Total with Card</span><span class="savings_calc_test-shippingSubTotal savings_calc_test-body-a_universal savings_calc_test-withcard savings_calc_test-FinalTotal-Amount"></span></div><div class="savings_calc_test-button-row"><a class="savings_calc_test-about-offer link">* Offer Details</a><span class="savings_calc_test-shippingSubTotal"><a class="savings_calc_test-getStartedButtonTracker savings_calc_test-getStartedButton savings_calc_test-getStartedButton1" href="' + wcdSavingsCalcApplyURL + '" target="_blank">APPLY NOW</a></span></div></div></div></div></div>';
-var brongSavingsCalcContent = '<div class="savings_calc_test-box"><div class="savings_calc_test-Top"><div class="savings_calc_test-Card"><span class="savings_calc_test-cardEnrollmentIcon-ON-CBCC"></span><div class="savings_calc_test-PromotionMessage"><b>Save 20% on Old Navy items</b><br><div>with your first Old Navy Card purchase&#042;</div><div>Open a Card today!</div></div></div><div class="middleSection"><div class="savings_calc_test-preApprovalCardRow"><span class="savings_calc_test-subTotalTitle savings_calc_test-shippingSubTotalTitle savings_calc_test-body-a_universal savings_calc_test-SubTotalText">Estimated Total</span><span class="savings_calc_test-shippingSubTotal savings_calc_test-body-a_universal savings_calc_test-SubTotal savings_calc_test-SubTotal-Amount"></span></div><div class="savings_calc_test-preApprovalCardRow"><span class="savings_calc_test-subTotalTitle savings_calc_test-shippingSubTotalTitle savings_calc_test-saving savings_calc_test-body-a_universal">Savings</span><span class="savings_calc_test-shippingSubTotal savings_calc_test-saving savings_calc_test-body-a_universal savings_calc_test-Savings-Amount"></span><div class="savings_calc_test-total-space"><span class="savings_calc_test-subTotalTitle savings_calc_test-shippingSubTotalTitle savings_calc_test-withcard savings_calc_test-body-a_universal">Estimated Total with Card</span><span class="savings_calc_test-shippingSubTotal savings_calc_test-body-a_universal savings_calc_test-withcard savings_calc_test-FinalTotal-Amount"></span></div></div></div><div class="savings_calc_test-Bottom"><div class="savings_calc_test-afterBar"><div class="savings_calc_test-button-row"><span class="savings_calc_test-shippingSubTotal"><a class="savings_calc_test-getStartedButtonTracker savings_calc_test-getStartedButton savings_calc_test-getStartedButton1" href="' + wcdSavingsCalcApplyURL + '" target="_blank">APPLY NOW</a></span><a class="savings_calc_test-about-offer link">* Offer Details</a></div></div></div></div></div>';
 utils.waitUntil(function() {
   return jQuery('.subTotalSeparator').length > 0;
 }).then(function() {
 
-  utils.waitForElement('.shoppingBagHeader').then(function(element) {
-    document.querySelector('.shoppingBagHeader').insertAdjacentHTML('afterend',brongSavingsCalcContent);
+
+  utils.waitForElement('#shopping-bag-promo-box').then(function(element) {
+    document.querySelector('#shopping-bag-promo-box').insertAdjacentHTML('beforeend',brongSavingsCalcContent);
   }).then(function(){
     jQuery('.savings_calc_test-SubTotal-Amount').html(window.salesCalc_subtotal_Global);
     jQuery('.savings_calc_test-Savings-Amount').html(window.salesCalc_savingsAmount_Global);
     jQuery('.savings_calc_test-FinalTotal-Amount').html(window.salesCalc_subtotalWithCard_Global);
   });
 
+  
 
   setTimeout(function() {
     jQuery('.savings_calc_test-getStartedButtonTracker').on('click', function() {
