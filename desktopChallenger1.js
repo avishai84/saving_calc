@@ -10,6 +10,8 @@ var brongSavingsCalcContent = '<div class="savings_calc_test-box"><div class="sa
 utils.waitUntil(function() {
   return jQuery('.subTotalSeparator').length > 0;
 }).then(function() {
+
+
   utils.waitForElement('#shopping-bag-promo-box').then(function(element) {
     document.querySelector('#shopping-bag-promo-box').insertAdjacentHTML('beforeend',brongSavingsCalcContent);
   }).then(function(){
@@ -17,6 +19,8 @@ utils.waitUntil(function() {
     jQuery('.savings_calc_test-Savings-Amount').html(window.salesCalc_savingsAmount_Global);
     jQuery('.savings_calc_test-FinalTotal-Amount').html(window.salesCalc_subtotalWithCard_Global);
   });
+
+  
 
   setTimeout(function() {
     jQuery('.savings_calc_test-getStartedButtonTracker').on('click', function() {
