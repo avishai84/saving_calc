@@ -1,18 +1,5 @@
-# saving_calc
+# Card Savings Calculator - Placement Optimization in Bag (Q1 2019)
 
-Saving Calc. in shopping bag experiment 2019 ONOL Feb
+confluence:
+https://confluence.gapinc.com/pages/viewpage.action?pageId=298235323
 
- On Desktop and Tablet:
- 
-Controller (33%) is not going to show the saving calc.
- 
-Challenger 1 (33%): show below promotion box;
-
- 
-Challenger 2 (33%): show as a banner:
-
- 
-Mobile:
-Control (50%): not showing saving calc.
-
-Challenger (50%): show below promotion:
