@@ -20,7 +20,7 @@
 @supports (-webkit-overflow-scrolling: touch) {
     @media(max-width: 400px) {
         .savings_calc_test-cardEnrollmentIcon-ON-CBCC {
-            background-position: -318px 0px;
+            background-position: -360px 0px;
         }
     }
 }
