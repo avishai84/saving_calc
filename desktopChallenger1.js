@@ -48,12 +48,7 @@ utils.waitUntil(function() {
   }, 800);
 });
 jQuery(document).on('wcd_salesCalc_override:ready', function() {
-  var salesCalc_subtotal = parseFloat(window.salesCalc_subtotal_Global.split('$')[1]);
-  var salesCalc_savingsAmount = Math.floor(window.salesCalc_nonExcludedItems_subTotal_Global * 20) / 100;
-  var salesCalc_subtotalWithCard = (salesCalc_subtotal - salesCalc_savingsAmount);
-  window.salesCalc_subtotal_Global = '$' + salesCalc_subtotal.toFixed(2);
-  window.salesCalc_savingsAmount_Global = '-$' + salesCalc_savingsAmount.toFixed(2);
-  window.salesCalc_subtotalWithCard_Global = '$' + salesCalc_subtotalWithCard.toFixed(2);
+
   //assign values to display
   if (window.salesCalc_savingsAmount_Global && parseFloat(window.salesCalc_savingsAmount_Global.split('-$')[1]) > 4.99) {
     jQuery('.savings_calc_test-SubTotal-Amount').html(window.salesCalc_subtotal_Global);
