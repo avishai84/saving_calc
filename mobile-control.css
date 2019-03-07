@@ -20,7 +20,7 @@
 @supports(-webkit-appearance: initial) {
     @media all and (max-width: 414px) {
         .savings_calc_test-cardEnrollmentIcon-ON-CBCC {
-            background-position: -318px 0px;
+            background-position: -360px 0px;
         }
     }
 } 
