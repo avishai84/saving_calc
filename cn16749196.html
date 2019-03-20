@@ -596,43 +596,41 @@ if (location.pathname == '/buy/shopping_bag.do' && window.angular !== undefined 
             if (window.salesCalcTestSeg === 'A'){
               //get the amount of savings using 20% off subtotal
               var salesCalc_savingsAmount = (salesCalc_nonExcludedItems_subTotal * 30) / 100;
+   /*
+               Fix for penny inaccuracy if total discount price is a half fraction (.005) decimal point or greater.
+                This code designed to make sure any third decimal point of for example .155 will round up to .16
+                Anything below decimal point .5 will not.
+              */ 
 
-                // Truncate to only 3 decimal points 
-                function fixedNum(x = null ){
-                  if(x != null){
-                    salesCalc_savingsAmount = Number.parseFloat(x).toFixed(3);
-                    // convert string to number and return it
-                    salesCalc_savingsAmount = parseFloat(salesCalc_savingsAmount);
-                    return salesCalc_savingsAmount;
-                  }
+              // Truncate to only 3 decimal points 
+              function fixedNum(x = null ){
+                if(x != null){
+                  salesCalc_savingsAmount = Number.parseFloat(x).toFixed(3);
+                  // convert string to number and return it
+                  salesCalc_savingsAmount = parseFloat(salesCalc_savingsAmount);
+                  return salesCalc_savingsAmount;
                 }
-                fixedNum(salesCalc_savingsAmount);
+              }
+              fixedNum(salesCalc_savingsAmount);
 
-                // Fix for penny inaccuracy if total discount price is a half fraction (.005) decimal point or greater.
-                  
-                  // check if the discounted products decimal point is 5 or greater
-                  function checkForCeil(x = null){
-                      // set default params to null
-                      if(x != null){
-                          x = x.toString();
-                          x = x.charAt(x.length - 1);
-                          x = parseInt(x);
-                          return x >= 5 ? ceilNumber(salesCalc_savingsAmount) : false ;
-                      }
-                  }
+              function checkForCeil(x = null){
+              // check if the discounted products decimal point is 5 or greater
+                if(x != null){
+                  x = x.toString();
+                  x = x.charAt(x.length - 1);
+                  x = parseInt(x);
+                  return x >= 5 ? ceilNumber(salesCalc_savingsAmount) : false ;
+                }
+              }
 
-                  function ceilNumber(x = null) { 
-                      if(x != null){
-                          salesCalc_savingsAmount = Math.ceil(x * Math.pow(10, 2)) / Math.pow(10, 2);
-                          return salesCalc_savingsAmount;
-                      }
-                  }
-
-                  checkForCeil(salesCalc_savingsAmount);
-
-                  console.log("%c%s","color: green; background: yellow; font-size: 24px;",'Final Results salesCalc_savingsAmount: '+salesCalc_savingsAmount);
-
-                  console.log("%c%s","color: green; background: yellow; font-size: 24px;",'Final Results salesCalc_savingsAmount TYPEOF: '+ typeof salesCalc_savingsAmount);
+              function ceilNumber(x = null) { 
+                // round upward by a penny
+                if(x != null){
+                  salesCalc_savingsAmount = Math.ceil(x * Math.pow(10, 2)) / Math.pow(10, 2);
+                  return salesCalc_savingsAmount;
+                }
+              }
+              checkForCeil(salesCalc_savingsAmount);
 
                 //calculate the estimated subtotal w/ card
                 var salesCalc_subtotalWithCard = Math.floor((salesCalc_subtotal - salesCalc_savingsAmount) * 100) / 100;
