@@ -46,7 +46,7 @@ window.addEventListener('DOMContentLoaded', function(event){
 
 
  var getSDP = function(){
-     alert(cs_link_d_apply_now);
+  //API call for SDP
     fetch(cs_link_d_apply_now).then(function(response){ 
      return response.ok ? response.json(): response = null})
       .then(function(data){
