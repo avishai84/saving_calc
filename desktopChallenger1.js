@@ -20,7 +20,48 @@ var brongSavingsCalcContent = '<div class="savings_calc_test-box"><div class="sa
 
 var brand_name = "on";  
 var cs_link_d_apply_now;
-var clientFormCodeURL = "OLDNAVY"
+var clientFormCodeURL = ""
+var domainOrig = window.location.hostname;
+var regexBrandTest = /^\w{3}/gmi;
+var whichBrand = domainOrig.match(regexBrandTest);
+
+switch(whichBrand[0]) {
+  case "gap":
+    clientFormCodeURL = "GAP";
+    break;
+  case "old":
+  clientFormCodeURL = "OLDNAVY";
+    break;
+  case "ban":
+  clientFormCodeURL = "BANANA%20REP";
+  break;  
+  case "ath":
+  clientFormCodeURL = "ATHLETA";
+    break;
+  case "hil":
+  clientFormCodeURL = "";
+  break;
+  default:
+  clientFormCodeURL = "";
+}
+
+
+/*
+
+    test: {
+        gap: 'https://dapply.syf.com/eapply/eapply.action?clientCode=GAP',
+        on: 'https://dapply.syf.com/eapply/eapply.action?clientCode=OLDNAVY',
+        br: 'https://dapply.syf.com/eapply/eapply.action?clientCode=BANANA%20REP',
+        at: 'https://dapply.syf.com/eapply/eapply.action?clientCode=ATHLETA',
+    },
+    prod: {
+        gap: 'https://apply.syf.com/eapply/eapply.action?clientCode=GAP',
+        on: 'https://apply.syf.com/eapply/eapply.action?clientCode=OLDNAVY',
+        br: 'https://apply.syf.com/eapply/eapply.action?clientCode=BANANA%20REP',
+        at: 'https://apply.syf.com/eapply/eapply.action?clientCode=ATHLETA',
+    }
+}
+*/ 
 
 // Creating a hidden form
 function createFormHidden(){
