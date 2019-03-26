@@ -49,16 +49,16 @@ window.addEventListener('DOMContentLoaded', function(event){
   //API call for SDP
     fetch(cs_link_d_apply_now).then(function(response){ 
      return response.ok ? response.json(): response = null})
-      .then(function(data){
+      .then(function(response){
           if(response){
-            console.log("%c%s","color: green; background: yellow; font-size: 24px;","SDP Return: "+data);
+            console.log("%c%s","color: green; background: yellow; font-size: 24px;","SDP Return: "+response);
             // append the results to a hidden input value on the form and POST submit form 
             var form = document.querySelector('.sdp_saving_calc');
             var inpt = form.querySelector('input[name="synchrony"]');
-                inpt.value = data;
+                inpt.value = response;
                 form.submit();
               }else{
-                console.log("%c%s","color: green; background: yellow; font-size: 24px;","SDP Return: bad response "+data);
+                console.log("%c%s","color: green; background: yellow; font-size: 24px;","SDP Return: bad response "+response);
               }
           }
       )};
