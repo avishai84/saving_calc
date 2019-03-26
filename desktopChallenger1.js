@@ -48,16 +48,20 @@ window.addEventListener('DOMContentLoaded', function(event){
  var getSDP = function(){
      alert(cs_link_d_apply_now);
     fetch(cs_link_d_apply_now).then(function(response){ 
-     return response.ok ? response.json(): console.log("%c%s","color: green; background: yellow; font-size: 24px;", 'Response BAD');})
+     return response.ok ? response.json(): response = null})
       .then(function(data){
+          if(response){
             console.log("%c%s","color: green; background: yellow; font-size: 24px;","SDP Return: "+data);
             // append the results to a hidden input value on the form and POST submit form 
             var form = document.querySelector('.sdp_saving_calc');
             var inpt = form.querySelector('input[name="synchrony"]');
                 inpt.value = data;
                 form.submit();
-                }
-           )};
+              }else{
+                console.log("%c%s","color: green; background: yellow; font-size: 24px;","SDP Return: bad response "+data);
+              }
+          }
+      )};
      
 //   Waiting for Personalization service
   var waitForPersonalization = window.setInterval(isPersAvailable, 800);
