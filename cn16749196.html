@@ -601,7 +601,7 @@ if (location.pathname == '/buy/shopping_bag.do' && window.angular !== undefined 
 
               var salesCalc_subtotalWithCard = Math.floor((salesCalc_subtotal - salesCalc_savingsAmount) * 100) / 100;
               
-              /* Setting a Promise for SDP when hidden input field is ready in DOM ready
+              /* SYNCRONY - Setting a Promise for SDP when hidden input field is ready in DOM ready
                   -- we will test if we can call this promise from Optly.
                  */ 
               var homeTestDiv = '';
@@ -609,10 +609,14 @@ if (location.pathname == '/buy/shopping_bag.do' && window.angular !== undefined 
               window.waitForHiddenSDP = function () {
                 return new Promise(function (resolve, reject) {
                   window.homeTestDiv = document.querySelector('.homeTest');
-                    (window.homeTestDiv != null || window.homeTestDiv != undefined) ? resolve('Elem is OK') : reject('elem does not exist');
+                    (window.homeTestDiv != null || window.homeTestDiv != undefined) ? resolve('Elem is found.') : reject('!!SYNCRONY Error. Elem not found');
                     });
                   };
-                  
+                  // Create a form avauilable in DOM 
+                  <form class="sdp_saving_calc" action="https://tapply.syf.com/eapply/eapply.action?clientCode=GAP">
+                    <input type="hidden" type="text" />
+                    // Value is the API call results
+                    </form>
                   // if( window.waitForHiddenSDP){
                   //   window.waitForHiddenSDP().then(function (data) {
                   //     console.log("%c%s","color: green; background: yellow; font-size: 24px;",data);
@@ -621,7 +625,7 @@ if (location.pathname == '/buy/shopping_bag.do' && window.angular !== undefined 
                   //   });
                   // }
 
-                  */ 
+                
 
                 //calculate the estimated subtotal w/ card
               window.salesCalc_nonExcludedItems_subTotal_Global = salesCalc_nonExcludedItems_subTotal;
