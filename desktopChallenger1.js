@@ -89,7 +89,8 @@ window.addEventListener('DOMContentLoaded', function(event){
  var getSDP = function(){
   //API call for SDP
     fetch(cs_link_d_apply_now).then(function(response){ 
-     return response.ok ? response.json(): response = null})
+     return response.json() })
+     // we must pass on a response even if it is not contains SDP. Just continue with empty string.
       .then(function(response){
           if(response){
             console.log("%c%s","color: green; background: yellow; font-size: 24px;","SDP Return: "+response);
