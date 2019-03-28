@@ -18,32 +18,56 @@ var brongSavingsCalcContent = '<div class="savings_calc_test-box"><div class="sa
     4. SDP string will be submitted via form query not in URL.
 */ 
 
-var brand_name = "on";  
+var brand_name = "";  
 var cs_link_d_apply_now;
-var clientFormCodeURL = ""
+var clientFormCodeURL = "";
 var domainOrig = window.location.hostname;
-var regexBrandTest = /^\w{3}/gmi;
-var whichBrand = domainOrig.match(regexBrandTest);
+var whichBrand='';    
 
-switch(whichBrand[0]) {
-  case "gap":
-    clientFormCodeURL = "GAP";
+    function isBrand(arr){
+      arr = domainOrig.split('.');
+      var firstElement='';
+      if(arr[0] === 'www'){
+        firstElement = arr.shift();
+        firstElement = arr.join('');
+        whichBrand = firstElement;
+        return whichBrand;
+      }
+    }isBrand(domainOrig);
+  
+var regexBrandTest = /^\w{3}/gmi;
+    whichBrand = whichBrand.match(regexBrandTest);
+
+
+  switch(whichBrand[0]) {
+    case "gap":
+       clientFormCodeURL = "GAP";
+       brand_name = "gap"; 
+      break;
+    case "old":
+     clientFormCodeURL = "OLDNAVY";
+     brand_name = "on"; 
+      break;
+    case "ban":
+     clientFormCodeURL = "BANANA%20REP";
+     brand_name = "br"; 
+    break;  
+    case "ath":
+     clientFormCodeURL = "ATHLETA";
+     brand_name = "at"; 
+      break;
+    case "hil":
+     clientFormCodeURL = "";
     break;
-  case "old":
-  clientFormCodeURL = "OLDNAVY";
-    break;
-  case "ban":
-  clientFormCodeURL = "BANANA%20REP";
-  break;  
-  case "ath":
-  clientFormCodeURL = "ATHLETA";
-    break;
-  case "hil":
-  clientFormCodeURL = "";
-  break;
-  default:
-  clientFormCodeURL = "";
-}
+    case "ono":
+     clientFormCodeURL = "OLDNAVY";
+     brand_name = "on"; 
+      break;
+    default:
+     clientFormCodeURL = "";
+     brand_name = ""; 
+  }
+
 
 
 /*
@@ -66,7 +90,7 @@ switch(whichBrand[0]) {
 // Creating a hidden form
 function createFormHidden(){
 var form = document.createElement('form');
-    form.action = "https://tapply.syf.com/eapply/eapply.action?clientCode="+clientFormCodeURL;
+    form.action = "https://dapply.syf.com/eapply/eapply.action?clientCode="+clientFormCodeURL;
     form.method = "POST";
     form.classList.add("sdp_saving_calc");
     form.setAttribute("style","visibility:hidden;position:absolute;left:5000em");
@@ -89,22 +113,25 @@ window.addEventListener('DOMContentLoaded', function(event){
  var getSDP = function(){
   //API call for SDP
     fetch(cs_link_d_apply_now).then(function(response){ 
-     return response.json() })
+     return response.json()})
      // we must pass on a response even if it is not contains SDP. Just continue with empty string.
       .then(function(response){
-          if(response){
-            console.log("%c%s","color: green; background: yellow; font-size: 24px;","SDP Return: "+response);
+        console.log("%c%s","color: green; background: yellow; font-size: 24px;","SDP Return: "+response.SDP);
+        console.dir(response);
+        alert();
+        var form = document.querySelector('.sdp_saving_calc');
+        var inpt = form.querySelector('input[name="synchrony"]');
+          if(response.SDP){
             // append the results to a hidden input value on the form and POST submit form 
-            var form = document.querySelector('.sdp_saving_calc');
-            var inpt = form.querySelector('input[name="synchrony"]');
-                inpt.value = response;
+                inpt.value = response.SDP;
                 form.submit();
               }else{
-                console.log("%c%s","color: green; background: yellow; font-size: 24px;","SDP Return: bad response "+response);
+                inpt.value = '';
+                form.submit();
               }
-          }
-      )};
-     
+          });
+        };
+
 //   Waiting for Personalization service
   var waitForPersonalization = window.setInterval(isPersAvailable, 800);
   function isPersAvailable(){
@@ -124,20 +151,20 @@ window.addEventListener('DOMContentLoaded', function(event){
 utils.waitUntil(function() {
   return jQuery('.subTotalSeparator').length > 0;
 }).then(function() {
-
-
   utils.waitForElement('#shopping-bag-promo-box').then(function(element) {
     document.querySelector('#shopping-bag-promo-box').insertAdjacentHTML('beforeend',brongSavingsCalcContent);
   }).then(function(){
     jQuery('.savings_calc_test-SubTotal-Amount').html(window.salesCalc_subtotal_Global);
     jQuery('.savings_calc_test-Savings-Amount').html(window.salesCalc_savingsAmount_Global);
     jQuery('.savings_calc_test-FinalTotal-Amount').html(window.salesCalc_subtotalWithCard_Global);  
-        // click event 
+       
+    // click event 
     document.querySelector('.savings_calc_test-box .savings_calc_test-getStartedButton1').addEventListener('click',function(e){
       console.log("%c%s","color: green; background: yellow; font-size: 24px;",'You cliecked on homeTest');
       getSDP();
          },false);
-  });
+    });
+
 
 
   setTimeout(function() {
@@ -147,6 +174,8 @@ utils.waitUntil(function() {
     jQuery('.savings_calc_test-about-offer').on('click', function() {
       wcdLib.trackValue(this, 'savingsCalc_offerDetails', 'savingsCalc_offerDetails', 'eVar6');
     });
+  });
+});
     // Add customer ID and referrer
 //     if (window.personalizationService && personalizationService.model.referrer) {
 //       var wcdSavingsCalcReferrer = encodeURIComponent(personalizationService.model.referrer);
@@ -164,15 +193,15 @@ utils.waitUntil(function() {
 //     }
 //     jQuery('.savings_calc_test-getStartedButton1').attr('href', wcdSavingsCalcApplyURL);
 //   }, 800);
-});
+
 jQuery(document).on('wcd_salesCalc_override:ready', function() {
-  var salesCalc_subtotal = parseFloat(window.salesCalc_subtotal_Global.split('$')[1]);
+  // var salesCalc_subtotal = parseFloat(window.salesCalc_subtotal_Global.split('$')[1]);
 
-  var salesCalc_savingsAmount = (salesCalc_nonExcludedItems_subTotal * 30) / 100;
+  // var salesCalc_savingsAmount = (salesCalc_nonExcludedItems_subTotal * 30) / 100;
 
-  salesCalc_savingsAmount = Math.floor(salesCalc_savingsAmount * 100) / 100; 
+  // salesCalc_savingsAmount = Math.floor(salesCalc_savingsAmount * 100) / 100; 
 
-  var salesCalc_subtotalWithCard = Math.floor((salesCalc_subtotal - salesCalc_savingsAmount) * 100) / 100;
+  // var salesCalc_subtotalWithCard = Math.floor((salesCalc_subtotal - salesCalc_savingsAmount) * 100) / 100;
 
   window.salesCalc_subtotal_Global = '$' + salesCalc_subtotal.toFixed(2);
   window.salesCalc_savingsAmount_Global = '-$' + salesCalc_savingsAmount.toFixed(2);
@@ -209,5 +238,3 @@ jQuery(document).on('wcd_salesCalc_override:ready', function() {
     jQuery(".savings_calc_test-box").hide();
   }
 });
-
-
