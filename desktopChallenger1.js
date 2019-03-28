@@ -8,22 +8,21 @@ var utils = window.optimizely.get('utils');
 // var wcdSavingsCalcApplyURL = "https://apply.syf.com/eapply/eapply.action?clientCode=OLDNAVY&sitecode=onbcsl0d2";
 var brongSavingsCalcContent = '<div class="savings_calc_test-box"><div class="savings_calc_test-Top" style="overflow: hidden;"><div class="savings_calc_test-Card"><span style="display: inline-block;" class="savings_calc_test-cardEnrollmentIcon-ON-CBCC"></span><div class="savings_calc_test-PromotionMessage"><b>Save 20% on Old Navy items</b><br><div>with your first Old Navy Card purchase&#042;</div><div>Open a Card today!</div></div></div><div><div class="savings_calc_test-space savings_calc_test-body-a_universal savings_calc_test-preApprovalCardRow savings_calc_test-border"></div><div class="savings_calc_test-preApprovalCardRow"><span class="savings_calc_test-subTotalTitle savings_calc_test-shippingSubTotalTitle savings_calc_test-body-a_universal savings_calc_test-SubTotalText">Estimated Total</span><span class="savings_calc_test-shippingSubTotal savings_calc_test-body-a_universal savings_calc_test-SubTotal savings_calc_test-SubTotal-Amount"></span></div><div class="savings_calc_test-preApprovalCardRow savings_calc_test-border"><span class="savings_calc_test-subTotalTitle savings_calc_test-shippingSubTotalTitle savings_calc_test-saving savings_calc_test-body-a_universal">Savings</span><span class="savings_calc_test-shippingSubTotal savings_calc_test-saving savings_calc_test-body-a_universal savings_calc_test-Savings-Amount"></span></div></div><div class="savings_calc_test-Bottom"><div class="savings_calc_test-afterBar"><div class="savings_calc_test-total-space"><span class="savings_calc_test-subTotalTitle savings_calc_test-shippingSubTotalTitle savings_calc_test-withcard savings_calc_test-body-a_universal">Estimated Total with Card</span><span class="savings_calc_test-shippingSubTotal savings_calc_test-body-a_universal savings_calc_test-withcard savings_calc_test-FinalTotal-Amount"></span></div><div class="savings_calc_test-button-row"><a class="savings_calc_test-about-offer link">* Offer Details</a><span class="savings_calc_test-shippingSubTotal"><a class="savings_calc_test-getStartedButtonTracker savings_calc_test-getStartedButton savings_calc_test-getStartedButton1">APPLY NOW</a></span></div></div></div></div></div>';
 
-// SDP Update code 
-
 /*
-    Details about SDP (Secure Data Package) Update code
-    1. getSDP FN will fetch a response from the API.
-    2. Adding the response to the form hidden input field.
-    3. Submitting form via POST method which will redirect to Credit Card page.
+    SDP (Secure Data Package) Update code
+    1. Getting SDP via API.
+    2. Adding the SDP response to the hidden form input.
+    3. Submitting form via POST method which will redirect to Credit Card page on a new tab.
     4. SDP string will be submitted via form query not in URL.
 */ 
 
 var brand_name = "";  
-var cs_link_d_apply_now;
+var cs_link_d_apply_now="";
 var clientFormCodeURL = "";
 var domainOrig = window.location.hostname;
 var whichBrand='';    
 
+//dynamic brand attribute
     function isBrand(arr){
       arr = domainOrig.split('.');
       var firstElement='';
@@ -58,6 +57,7 @@ var regexBrandTest = /^\w{3}/gmi;
       break;
     case "hil":
      clientFormCodeURL = "";
+     brand_name = ""; 
     break;
     case "ono":
      clientFormCodeURL = "OLDNAVY";
@@ -67,7 +67,6 @@ var regexBrandTest = /^\w{3}/gmi;
      clientFormCodeURL = "";
      brand_name = ""; 
   }
-
 
 
 /*
@@ -92,6 +91,7 @@ function createFormHidden(){
 var form = document.createElement('form');
     form.action = "https://dapply.syf.com/eapply/eapply.action?clientCode="+clientFormCodeURL;
     form.method = "POST";
+    form.target = "_blank";
     form.classList.add("sdp_saving_calc");
     form.setAttribute("style","visibility:hidden;position:absolute;left:5000em");
     document.querySelector('body').append(form);
@@ -101,7 +101,7 @@ var form = document.createElement('form');
 function appendHiddenInput(){
     var input = document.createElement('input');
         input.type = "hidden";
-        input.name= "synchrony";
+        input.name= "sdp";
         document.querySelector('.sdp_saving_calc').appendChild(input);
 }
 
@@ -109,27 +109,25 @@ window.addEventListener('DOMContentLoaded', function(event){
     createFormHidden();
 });
 
-
  var getSDP = function(){
   //API call for SDP
+  if(cs_link_d_apply_now.length !== 0){
     fetch(cs_link_d_apply_now).then(function(response){ 
-     return response.json()})
-     // we must pass on a response even if it is not contains SDP. Just continue with empty string.
-      .then(function(response){
-        console.log("%c%s","color: green; background: yellow; font-size: 24px;","SDP Return: "+response.SDP);
-        console.dir(response);
-        alert();
-        var form = document.querySelector('.sdp_saving_calc');
-        var inpt = form.querySelector('input[name="synchrony"]');
-          if(response.SDP){
-            // append the results to a hidden input value on the form and POST submit form 
-                inpt.value = response.SDP;
-                form.submit();
-              }else{
-                inpt.value = '';
-                form.submit();
-              }
-          });
+      return response.json()})
+       .then(function(response){
+         var form = document.querySelector('.sdp_saving_calc');
+         var inpt = form.querySelector('input[name="sdp"]');
+           if(response.SDP){
+             // append the results to a hidden input value on the form and POST submit form 
+                 inpt.value = response.SDP;
+                 form.submit();
+               }else{
+                 //if no SDP empty string is ok
+                 inpt.value = '';
+                 form.submit();
+               }
+           });
+          }
         };
 
 //   Waiting for Personalization service
@@ -140,7 +138,6 @@ window.addEventListener('DOMContentLoaded', function(event){
             (function(){
                 var custmrPZID = personalizationService.model.personalizationData.personalizationInfoV1.customerUUID;
                 cs_link_d_apply_now = window.location.origin+"/credit-card-accept/digital-applications/"+brand_name+"?&returnURL="+window.location.origin+"/&externalCustomerId="+custmrPZID;
-                console.log("%c%s","color: green; background: yellow; font-size: 24px;",cs_link_d_apply_now);
                 return cs_link_d_apply_now;
             }());
         }
@@ -157,15 +154,9 @@ utils.waitUntil(function() {
     jQuery('.savings_calc_test-SubTotal-Amount').html(window.salesCalc_subtotal_Global);
     jQuery('.savings_calc_test-Savings-Amount').html(window.salesCalc_savingsAmount_Global);
     jQuery('.savings_calc_test-FinalTotal-Amount').html(window.salesCalc_subtotalWithCard_Global);  
-       
     // click event 
-    document.querySelector('.savings_calc_test-box .savings_calc_test-getStartedButton1').addEventListener('click',function(e){
-      console.log("%c%s","color: green; background: yellow; font-size: 24px;",'You cliecked on homeTest');
-      getSDP();
-         },false);
+    document.querySelector('.savings_calc_test-box .savings_calc_test-getStartedButton1').addEventListener('click',function(e){getSDP();},false);
     });
-
-
 
   setTimeout(function() {
     jQuery('.savings_calc_test-getStartedButtonTracker').on('click', function() {
@@ -176,23 +167,7 @@ utils.waitUntil(function() {
     });
   });
 });
-    // Add customer ID and referrer
-//     if (window.personalizationService && personalizationService.model.referrer) {
-//       var wcdSavingsCalcReferrer = encodeURIComponent(personalizationService.model.referrer);
-//     } else if (document.referrer) {
-//       var wcdSavingsCalcReferrer = document.referrer;
-//     }
-//     if (wcdSavingsCalcReferrer) {
-//       wcdSavingsCalcApplyURL = "https://apply.syf.com/eapply/eapply.action?clientCode=OLDNAVY&sitecode=onbcsl0d2&returnURL=" + wcdSavingsCalcReferrer;
-//     }
-//     if (window.personalizationService && personalizationService.model.personalizationData && personalizationService.model.personalizationData.personalizationInfoV1) {
-//       var wcdSavingsCalcCustomer = personalizationService.model.personalizationData.personalizationInfoV1.customerUUID;
-//       if (wcdSavingsCalcCustomer && wcdSavingsCalcReferrer) {
-//         wcdSavingsCalcApplyURL = "https://apply.syf.com/eapply/eapply.action?clientCode=OLDNAVY&sitecode=onbcsl0d2&returnURL=" + wcdSavingsCalcReferrer + "&externalCustomerId=" + wcdSavingsCalcCustomer;
-//       }
-//     }
-//     jQuery('.savings_calc_test-getStartedButton1').attr('href', wcdSavingsCalcApplyURL);
-//   }, 800);
+
 
 jQuery(document).on('wcd_salesCalc_override:ready', function() {
   // var salesCalc_subtotal = parseFloat(window.salesCalc_subtotal_Global.split('$')[1]);
@@ -203,9 +178,9 @@ jQuery(document).on('wcd_salesCalc_override:ready', function() {
 
   // var salesCalc_subtotalWithCard = Math.floor((salesCalc_subtotal - salesCalc_savingsAmount) * 100) / 100;
 
-  window.salesCalc_subtotal_Global = '$' + salesCalc_subtotal.toFixed(2);
-  window.salesCalc_savingsAmount_Global = '-$' + salesCalc_savingsAmount.toFixed(2);
-  window.salesCalc_subtotalWithCard_Global = '$' + salesCalc_subtotalWithCard.toFixed(2);
+  // window.salesCalc_subtotal_Global = '$' + salesCalc_subtotal.toFixed(2);
+  // window.salesCalc_savingsAmount_Global = '-$' + salesCalc_savingsAmount.toFixed(2);
+  // window.salesCalc_subtotalWithCard_Global = '$' + salesCalc_subtotalWithCard.toFixed(2);
   //assign values to display
   if (window.salesCalc_savingsAmount_Global && parseFloat(window.salesCalc_savingsAmount_Global.split('-$')[1]) > 4.99) {
     jQuery('.savings_calc_test-SubTotal-Amount').html(window.salesCalc_subtotal_Global);
